@@ -1,7 +1,6 @@
 --breakout tutorial--
 
        --goals--
--- 1. sticky paddle --
 -- 2. angle control --
 -- 3. levels --
 -- 4. different  bricks --
@@ -10,6 +9,8 @@
 -- 7. high score tracking --
 -- 8. power ups --
 -- 9. roguelike powers --
+-- 10.arrow animations
+-- 11.text blinking
 -- eamonrequest. colour scheme changes through gameplay --
 
 
@@ -89,11 +90,36 @@ function buildbricks()
 end
 
 function serveball()
- ball_x=pad_x+pad_w/2
+ ball_x=pad_x+flr(pad_w/2) 
  ball_y=pad_y-ball_r
- ball_dx=-1
+ ball_dx=1
  ball_dy=-1
+ ball_ang=1
  sticky=true
+end
+
+function setang(ang)
+ ball_ang=ang
+ if ang==2 then
+  ball_dx=.5*sign(ball_dx)
+  ball_dy=1.3*sign(ball_dy)
+ elseif ang==0 then
+  ball_dx=1.3*sign(ball_dx)
+  ball_dy=.5*sign(ball_dy)
+ else
+  ball_dx=1*sign(ball_dx)
+  ball_dy=1*sign(ball_dy)
+ end
+end
+
+function sign(n)
+ if n<0 then
+  return -1
+ elseif n>0 then
+  return 1
+ else
+  return 0
+ end
 end
 
 function gameover()
@@ -114,13 +140,24 @@ function update_game()
 
  if btn(⬅️) then 
   buttpress=true
-  pad_dx=-3
+  pad_dx=-2.5
  --pad_x-=5
+  if sticky then
+   ball_dx=-1
+  end
  end
  if btn(➡️) then 
   buttpress=true
-  pad_dx=3
+  pad_dx=2.5
  --pad_x+=5
+  if sticky then
+   ball_dx=1
+  end
+ end
+
+ if sticky and btn(❎) then
+  sticky=false
+  sfx(8)
  end
  
  if not(buttpress) then
@@ -134,13 +171,13 @@ function update_game()
 
   if sticky then
    ball_x=pad_x+pad_w/2
-   ball_y=pad_y-ball_r
+   ball_y=pad_y-ball_r-1
   else
 
-  --regular ball physics0--
+  --regular ball physics--
   nextx=ball_x+ball_dx
   nexty=ball_y+ball_dy
-  --regular ball physics0--
+  --regular ball physics--
 
   --limit of canvas collision--
 
@@ -160,12 +197,13 @@ function update_game()
 
 --collision - paddle --
 
- --check if ball hit pad--
+  --check if ball hit pad--
   if ball_box(nextx,nexty,pad_x,pad_y,pad_w,pad_h) then
   --check if ball hit pad--
 
   --find which direction to deflect--
   if deflx_ball_box(ball_x,ball_y,ball_dx,ball_dy,pad_x,pad_y,pad_w,pad_h) then
+   --ball hit paddle on the side--
    ball_dx = -ball_dx
    if ball_x < pad_x+pad_w/2 then
     nextx=pad_x-ball_r
@@ -173,11 +211,28 @@ function update_game()
     nextx=pad_x+pad_w+ball_r
    end
   else
+   --ball hit paddle on the top/bottom--
    ball_dy = -ball_dy
    if ball_y > pad_y then
+    --bottom of paddle---
     nexty=pad_y+pad_h+ball_r
    else
+    --top of paddle---
     nexty=pad_y-ball_r
+    if abs(pad_dx)>2 then
+     --change angle--
+     if sign(pad_dx)==sign(ball_dx) then
+      --flatten angle
+      setang(mid(0,ball_ang-1,2))
+     else
+      --raise angle
+      if ball_ang==2 then
+       ball_dx=-ball_dx
+      else
+       setang(mid(0,ball_ang+1,2))
+      end
+     end
+    end 
    end
   end
   --collision actions--
@@ -188,12 +243,14 @@ function update_game()
 
  
 --collision - paddle --
+
   brickhit=false
+
  --collision - brick --
   for i=1,#brick_x do
    --check if ball hit pad--
    if brick_v[i] and ball_box(nextx,nexty,brick_x[i],brick_y[i],brick_w,brick_h) then
-    --check if ball hit pad--
+   --check if ball hit pad--
     --find which direction to deflect--
     if not (brickhi) then
      if deflx_ball_box(ball_x,ball_y,ball_dx,ball_dy,brick_x[i],brick_y[i],brick_w,brick_h) then
@@ -256,6 +313,12 @@ function draw_game()
 
  cls(1)
  circfill(ball_x,ball_y,ball_r,8)
+ if sticky then
+ print("press ❎ to serve ball",20,69,8)
+ --serve preview--
+ line(ball_x+ball_dx*4,ball_y+ball_dy*4,ball_x+ball_dx*8,ball_y+ball_dy*8,8)
+ --serve preview-- 
+ end
  rectfill(pad_x,pad_y,pad_x+pad_w,pad_y+pad_h,pad_c)
  
  --draw bricks--
