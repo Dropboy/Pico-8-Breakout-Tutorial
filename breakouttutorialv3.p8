@@ -72,6 +72,8 @@ function startgame()
 
  sticky=true
 
+ chain=1 --chain multiplier
+
  serveball()
 
 end
@@ -236,6 +238,7 @@ function update_game()
    end
   end
   --collision actions--
+  chain=1
   sfx(3)
   --collision actions--
   end  
@@ -260,9 +263,11 @@ function update_game()
     end
      --collision actions--
      brickhit=true
-     sfx(7)
+     sfx(9+chain)
      brick_v[i]=false
-     points+=10 
+     points+=10*chain
+     chain+=1
+     chain=mid(1,chain,10)
      --collision actions--
    end
   end 
@@ -336,6 +341,7 @@ function draw_game()
  rectfill(0,0,128,6,8)
  print("lives:"..lives,4,1,1)
  print("score:"..points,37,1,1)
+ print("combo:"..chain,77,1,1)
 end
 
 --ball collision with pad--
