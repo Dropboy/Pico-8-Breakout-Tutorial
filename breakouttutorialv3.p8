@@ -101,11 +101,11 @@ end
 function setang(ang)
  ball_ang=ang
  if ang==2 then
-  ball_dx=.5*sign(ball_dx)
-  ball_dy=1.3*sign(ball_dy)
+  ball_dx=0.50*sign(ball_dx)
+  ball_dy=1.30*sign(ball_dy)  
  elseif ang==0 then
-  ball_dx=1.3*sign(ball_dx)
-  ball_dy=.5*sign(ball_dy)
+  ball_dx=1.30*sign(ball_dx)
+  ball_dy=0.50*sign(ball_dy) 
  else
   ball_dx=1*sign(ball_dx)
   ball_dy=1*sign(ball_dy)
@@ -237,7 +237,6 @@ function update_game()
   end
   --collision actions--
   sfx(3)
-  points+=1 
   --collision actions--
   end  
 
@@ -248,23 +247,23 @@ function update_game()
 
  --collision - brick --
   for i=1,#brick_x do
-   --check if ball hit pad--
-   if brick_v[i] and ball_box(nextx,nexty,brick_x[i],brick_y[i],brick_w,brick_h) then
-   --check if ball hit pad--
+   --check if ball hit brick--
+   if brick_v[i] and ball_box(nextx,nexty-2,brick_x[i],brick_y[i],brick_w,brick_h) then
+   --check if ball hit brick--
     --find which direction to deflect--
-    if not (brickhi) then
+    if not (brickhit) then
      if deflx_ball_box(ball_x,ball_y,ball_dx,ball_dy,brick_x[i],brick_y[i],brick_w,brick_h) then
       ball_dx = -ball_dx
      else
       ball_dy = -ball_dy
      end
     end
-    --collision actions--
-    brickhit=true
-    sfx(7)
-    brick_v[i]=false
-    points+=10 
-    --collision actions--
+     --collision actions--
+     brickhit=true
+     sfx(7)
+     brick_v[i]=false
+     points+=10 
+     --collision actions--
    end
   end 
 --collision - brick --
