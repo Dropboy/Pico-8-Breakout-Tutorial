@@ -16,6 +16,7 @@
 function _init()
  cls()
  mode="start"
+ level="bbbbbb/bbbbbb"
 end
 
 function _update60()
@@ -62,7 +63,7 @@ function startgame()
  brick_w=9
  brick_h=3
  
- buildbricks()
+ buildbricks(level)
   
  --brick variables--
  
@@ -77,16 +78,25 @@ function startgame()
 
 end
 
-function buildbricks()
- local i
+function buildbricks(lvl)
+ local i,j, chr
  brick_x={}
  brick_y={}
  brick_v={}
- 
- for i=1,66 do
-  add(brick_x,4+((i-1)%11)*(brick_w+2))
-  add(brick_y,12+flr((i-1)/11)*(brick_h+2))
-  add(brick_v,true) 
+
+
+ j=0 
+ for i=1,#lvl do
+  j+=1
+  chr=sub(lvl,i,i)
+
+  if chr=="b" then
+   add(brick_x,4+((j-1)%11)*(brick_w+2))
+   add(brick_y,30+flr((j-1)/11)*(brick_h+2))
+   add(brick_v,true) 
+  elseif chr=="/" then
+   j=(flr((j-1)/11)+1)*11
+  end
  end
 end
 
@@ -187,13 +197,13 @@ function update_game()
    ball_dx = -ball_dx
    sfx(2)
   end
-  
+
   if nexty < 10 then
    nexty=mid(0,nexty,127)
    ball_dy = -ball_dy
    sfx(2)
   end
- 
+
   --limit of canvas collision--
 
 --collision - paddle --
@@ -247,10 +257,10 @@ function update_game()
 
   brickhit=false
 
- --collision - brick --
+ -- collision - brick --
   for i=1,#brick_x do
    --check if ball hit brick--
-   if brick_v[i] and ball_box(nextx,nexty-2,brick_x[i],brick_y[i],brick_w,brick_h) then
+   if brick_v[i] and ball_box(nextx,nexty,brick_x[i],brick_y[i],brick_w,brick_h) then
    --check if ball hit brick--
     --find which direction to deflect--
     if not (brickhit) then
@@ -266,11 +276,11 @@ function update_game()
      brick_v[i]=false
      points+=10*chain
      chain+=1
-     chain=mid(1,chain,10)
+     chain=mid(1,chain,8)
      --collision actions--
    end
   end 
---collision - brick --
+-- collision - brick --
 
   ball_x=nextx
   ball_y=nexty
@@ -317,7 +327,7 @@ function draw_game()
  cls(1)
  circfill(ball_x,ball_y,ball_r,8)
  if sticky then
- print("press ❎ to serve ball",20,69,8)
+ print("press ❎ to serve ball",20,100,8)
  --serve preview--
  line(ball_x+ball_dx*4,ball_y+ball_dy*4,ball_x+ball_dx*8,ball_y+ball_dy*8,8)
  --serve preview-- 
@@ -361,7 +371,7 @@ function ball_box(bx,by,box_x,box_y,box_w,box_h)
 end
 --ball collision with pad--
 
---tutorial written function beware--
+--tutorial written0function beware--
 function deflx_ball_box(bx,by,bdx,bdy,tx,ty,tw,th)
     local slp = bdy / bdx
     local cx, cy
