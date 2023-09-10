@@ -1,7 +1,6 @@
 --breakout tutorial--
 
        --goals--
--- 2. angle control --
 -- 3. levels --
 -- 4. different  bricks --
 -- 5. combos --
@@ -49,7 +48,7 @@ function startgame()
  --pad variables--
  
  pad_x=52
- pad_y=115
+ pad_y=120
  pad_dx=0
  
  pad_w=24 
