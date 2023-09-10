@@ -16,7 +16,7 @@
 function _init()
  cls()
  mode="start"
- level="bbbbbb/bbbbbb"
+ level="b6/b6"
 end
 
 function _update60()
@@ -96,6 +96,9 @@ function buildbricks(lvl)
    add(brick_v,true) 
   elseif chr=="/" then
    j=(flr((j-1)/11)+1)*11
+  elseif chr>="0" and chr<="9" then
+   
+  end
   end
  end
 end
