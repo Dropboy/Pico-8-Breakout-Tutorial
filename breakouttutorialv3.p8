@@ -16,7 +16,8 @@
 function _init()
  cls()
  mode="start"
- level="b6/b6"
+ level="b9/x9/b9/x9/b9/x9/b9"
+ debug=""
 end
 
 function _update60()
@@ -79,26 +80,37 @@ function startgame()
 end
 
 function buildbricks(lvl)
- local i,j, chr
+ local i,j,o,chr,last
  brick_x={}
  brick_y={}
  brick_v={}
-
-
  j=0 
+
  for i=1,#lvl do
   j+=1
   chr=sub(lvl,i,i)
 
   if chr=="b" then
+   last="b"
    add(brick_x,4+((j-1)%11)*(brick_w+2))
    add(brick_y,30+flr((j-1)/11)*(brick_h+2))
    add(brick_v,true) 
+  elseif chr=="x" then
+   last="x"
   elseif chr=="/" then
    j=(flr((j-1)/11)+1)*11
-  elseif chr>="0" and chr<="9" then
-   
-  end
+  elseif chr>="1" and chr<="9" then
+   debug=chr
+   for o=1,chr+0 do
+    if last=="b" then
+     add(brick_x,4+((j-1)%11)*(brick_w+2))
+     add(brick_y,20+flr((j-1)/11)*(brick_h+2))
+     add(brick_v,true)
+    elseif last=="x" then
+    end
+    j+=1
+   end
+   j-=1
   end
  end
 end
@@ -327,15 +339,15 @@ end
 function draw_game()
  local i
 
- cls(1)
- circfill(ball_x,ball_y,ball_r,8)
+  cls(1)
+  circfill(ball_x,ball_y,ball_r,8)
  if sticky then
- print("press ❎ to serve ball",20,100,8)
+  print("press ❎ to serve ball",20,100,8)
  --serve preview--
- line(ball_x+ball_dx*4,ball_y+ball_dy*4,ball_x+ball_dx*8,ball_y+ball_dy*8,8)
+  line(ball_x+ball_dx*4,ball_y+ball_dy*4,ball_x+ball_dx*8,ball_y+ball_dy*8,8)
  --serve preview-- 
  end
- rectfill(pad_x,pad_y,pad_x+pad_w,pad_y+pad_h,pad_c)
+  rectfill(pad_x,pad_y,pad_x+pad_w,pad_y+pad_h,pad_c)
  
  --draw bricks--
  
@@ -350,10 +362,14 @@ function draw_game()
  --draw pad--
  --draw pad--
   
- rectfill(0,0,128,6,8)
- print("lives:"..lives,4,1,1)
- print("score:"..points,37,1,1)
- print("combo:"..chain,77,1,1)
+  rectfill(0,0,128,6,8)
+ if debug!="" then 
+  print(debug,1,1,7)
+ else
+  print("lives:"..lives,4,1,1)
+  print("score:"..points,37,1,1)
+  print("combo:"..chain,77,1,1)
+ end
 end
 
 --ball collision with pad--
