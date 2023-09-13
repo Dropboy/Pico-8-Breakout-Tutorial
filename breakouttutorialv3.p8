@@ -83,6 +83,7 @@ function buildbricks(lvl)
  brick_x={}
  brick_y={}
  brick_v={}
+ brick_p={}
  j=0 
 
  for i=1,#lvl do
@@ -94,6 +95,7 @@ function buildbricks(lvl)
    add(brick_x,4+((j-1)%11)*(brick_w+2))
    add(brick_y,30+flr((j-1)/11)*(brick_h+2))
    add(brick_v,true) 
+   add(brick_p,true)
   elseif chr=="x" then
    last="x"
   elseif chr=="/" then
@@ -371,7 +373,7 @@ function draw_game()
  --draw bricks--
  
  for i=1,#brick_x do
-  if brick_v[i] then
+  if brick_v[i] and brick_p[i] then
    rectfill(brick_x[i],brick_y[i],brick_x[i]+brick_w,brick_y[i]+brick_h,8)
   end
  end
