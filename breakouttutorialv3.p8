@@ -1,7 +1,6 @@
 --breakout tutorial--
 
        --goals--
--- 3. levels --
 -- 4. different  bricks --
 -- 5. combos --
 -- 6. more game feel (particles/screenshake) --
@@ -115,6 +114,15 @@ function buildbricks(lvl)
  end
 end
 
+function check_level_finish()
+  for i=1,#brick_v do
+    if brick_v[i] then
+      return false  -- there's at least one active brick, so the level isn't finished.
+    end
+  end
+  return true  -- all bricks are destroyed; the level is finished.
+end
+
 function serveball()
  ball_x=pad_x+flr(pad_w/2) 
  ball_y=pad_y-ball_r
@@ -161,6 +169,7 @@ end
 function update_game()
  local buttpress=false
  local nextx,nexty,brickhit
+
  
 --pad movement--
 
@@ -310,8 +319,18 @@ function update_game()
     serveball()
    end
   end
+  -- check if the level is finished
+  if check_level_finish() then
+    -- handle level finish here
+    -- for example, you can load the next level or display a "level complete" message.
+    -- for simplicity, let's just restart the same level.
+    buildbricks(level)
+    serveball()
+    print("love u",20,80,8)
+  end
  end
 end
+
 
 function _draw()
  if mode=="game" then
