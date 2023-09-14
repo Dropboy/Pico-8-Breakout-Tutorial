@@ -84,6 +84,7 @@
   brick_y={}
   brick_v={}
   brick_c={}
+  hitstobreak={}
   j=0
 
   for i=1,#lvl do
@@ -117,7 +118,8 @@
       add(brick_x,4+((j-1)%11)*(brick_w+2))
       add(brick_y,20+flr((j-1)/11)*(brick_h+2))
       add(brick_v,true)
-      add(brick_c,10)   
+      add(brick_c,10)
+      add(hitstobreak,2)
      elseif last=="x" then
      end
      j+=1
@@ -307,14 +309,19 @@
        ball_dy = -ball_dy
       end
      end
-      --collision actions--
-      brickhit=true
-      sfx(9+chain)
-      brick_v[i]=false
-      points+=10*chain
-      chain+=1
-      chain=mid(1,chain,8)
-      --collision actions--
+      if hitstobreak==2 then
+       hitstobreak=1
+      elseif hitstobreak==1 then
+       --collision actions--
+       brickhit=true
+       sfx(9+chain)
+       brick_v[i]=false
+       points+=10*chain
+       chain+=1
+       chain=mid(1,chain,8)
+       --collision actions--
+     end
+      end
     end
    end 
  -- collision - brick --
@@ -339,7 +346,6 @@
      -- for simplicity, let's just restart the same level.
      buildbricks(level)
      serveball()
-     print("love u",20,80,8)
    end
   end
  end
