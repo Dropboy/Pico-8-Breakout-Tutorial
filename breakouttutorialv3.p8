@@ -309,9 +309,6 @@
        ball_dy = -ball_dy
       end
      end
-      if hitstobreak==2 then
-       hitstobreak=1
-      elseif hitstobreak==1 then
        --collision actions--
        brickhit=true
        sfx(9+chain)
@@ -320,6 +317,9 @@
        chain+=1
        chain=mid(1,chain,8)
        --collision actions--
+       if hitstobreak==2 then
+        hitstobreak=1
+       elseif hitstobreak==1 then
      end
       end
     end
