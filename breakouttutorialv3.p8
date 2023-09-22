@@ -129,15 +129,6 @@
   end
  end
 
- function check_level_finish()
-   for i=1,#brick_v do
-     if brick_v[i] then
-       return false  -- there's at least one active brick, so the level isn't finished.
-     end
-   end
-   return true  -- all bricks are destroyed; the level is finished.
- end
-
  function serveball()
   ball_x=pad_x+flr(pad_w/2) 
   ball_y=pad_y-ball_r
@@ -175,55 +166,53 @@
   mode="gameover"
  end
 
- function update_gameover()
-   if btn(❎) then
-   startgame()
+function update_gameover()
+  if btn(❎) then
+  startgame()
+ end
+end
+
+function update_game()
+ local buttpress=false
+ local nextx,nexty,brickhit
+
+  
+ --pad movement--
+
+ if btn(⬅️) then 
+  buttpress=true
+  pad_dx=-2.5
+  if sticky then
+   ball_dx=-1
   end
  end
 
- function update_game()
-  local buttpress=false
-  local nextx,nexty,brickhit
-
-  
- --pad movement--
-
-  if btn(⬅️) then 
-   buttpress=true
-   pad_dx=-2.5
-  --pad_x-=5
-   if sticky then
-    ball_dx=-1
-   end
+ if btn(➡️) then 
+  buttpress=true
+  pad_dx=2.5
+  if sticky then
+   ball_dx=1
   end
-  if btn(➡️) then 
-   buttpress=true
-   pad_dx=2.5
-  --pad_x+=5
-   if sticky then
-    ball_dx=1
-   end
-  end
+ end
 
-  if sticky and btn(❎) then
-   sticky=false
-   sfx(8)
-  end
-  
-  if not(buttpress) then
-   pad_dx=pad_dx/1.3
-  end
+ if sticky and btn(❎) then
+  sticky=false
+  sfx(8)
+ end
+ 
+ if not(buttpress) then
+  pad_dx=pad_dx/1.3
+ end
 
-   pad_x+=pad_dx
-   pad_x=mid(0,pad_x,127-pad_w)
+  pad_x+=pad_dx
+  pad_x=mid(0,pad_x,127-pad_w)
 
- --pad movement--
+  --pad movement--
 
-   if sticky then
-    ball_x=pad_x+pad_w/2
-    ball_y=pad_y-ball_r-1
-   else
-
+  if sticky then
+   ball_x=pad_x+pad_w/2
+   ball_y=pad_y-ball_r-1
+  else
    --regular ball physics--
    nextx=ball_x+ball_dx
    nexty=ball_y+ball_dy
@@ -231,17 +220,17 @@
 
    --limit of canvas collision--
 
-   if nextx > 124 or nextx < 3 then
-    nextx=mid(0,nextx,127)
-    ball_dx = -ball_dx
-    sfx(2)
-   end
+  if nextx > 124 or nextx < 3 then
+   nextx=mid(0,nextx,127)
+   ball_dx = -ball_dx
+   sfx(2)
+  end
 
-   if nexty < 10 then
-    nexty=mid(0,nexty,127)
-    ball_dy = -ball_dy
-    sfx(2)
-   end
+  if nexty < 10 then
+   nexty=mid(0,nexty,127)
+   ball_dy = -ball_dy
+   sfx(2)
+  end
 
    --limit of canvas collision--
 
@@ -320,7 +309,7 @@
        if hitstobreak==2 then
         hitstobreak=1
        elseif hitstobreak==1 then
-     end
+       end
       end
     end
    end 
@@ -329,22 +318,18 @@
    ball_x=nextx
    ball_y=nexty
   
-   if nexty > 124 then
+   if nexty < 10 then
+    nexty = mid(0, nexty, 127)
+    ball_dy = -ball_dy
+    sfx(2)
+   elseif nexty > 124 then
+    nexty=124
      sfx(6)
      lives-=1
     if lives<0 then
      sfx(5)
      gameover()
     else
-     serveball()
-    end
-   end
-   -- check if the level is finished
-   if check_level_finish() then
-     -- handle level finish here
-     -- for example, you can load the next level or display a "level complete" message.
-     -- for simplicity, let's just restart the same level.
-     buildbricks(level)
      serveball()
    end
   end
